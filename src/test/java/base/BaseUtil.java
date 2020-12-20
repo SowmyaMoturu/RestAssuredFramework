@@ -1,6 +1,8 @@
-package base;
+package steps;
 
 import config.Config;
+import io.cucumber.java.Before;
+import io.cucumber.java8.En;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -11,18 +13,26 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import static config.Settings.*;
+import static io.restassured.RestAssured.given;
 
-public class Utils {
+public class BaseUtil {
 
     private RequestSpecification getRequest;
     private RequestSpecification postreq;
     private static  PrintStream log;
+    protected RequestSpecification request;
 
-    public RequestSpecification getGetRequest() throws IOException {
-        Config.populateSettings();
+
+
+    public RequestSpecification getGetRequest() {
 
         if(log==null){
-            log = new PrintStream(new FileOutputStream("logging.txt"), true);
+            try{
+                Config.populateSettings();
+                log = new PrintStream(new FileOutputStream("logging.txt"), true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         getRequest = new RequestSpecBuilder().setBasePath(base_path).setBaseUri(base_uri)
@@ -32,13 +42,15 @@ public class Utils {
         return getRequest;
     }
 
-
-
-    public RequestSpecification getPostRequest() throws IOException {
-        Config.populateSettings();
+    public RequestSpecification getPostRequest() {
 
         if(log==null){
-            log = new PrintStream(new FileOutputStream("logging.txt"), true);
+            try{
+                Config.populateSettings();
+                log = new PrintStream(new FileOutputStream("logging.txt"), true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         postreq = new RequestSpecBuilder().setBasePath(base_path).setBaseUri(base_uri)
@@ -47,4 +59,6 @@ public class Utils {
                 .addHeader(authHeader, authKey).setContentType("application/json").build();
         return postreq;
     }
+
+
 }
